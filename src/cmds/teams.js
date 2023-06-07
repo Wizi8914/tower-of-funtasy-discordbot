@@ -8,6 +8,7 @@ const { roles, elements, arrow } = require("../utils/app-constants");
 const NAME = path.parse(__filename).name;
 const DESCRIPTION = 'Allows giving meta teams according to different characteristics';
 
+const client = require('../../index');
 
 function goToCompLink(characterNames) {
   const searchParams = encodeURIComponent(JSON.stringify(characterNames));
@@ -54,6 +55,8 @@ module.exports = {
   async execute(interaction) {
     const role = interaction.options.getString('role');
     const element = interaction.options.getString('element');
+
+    const simulacraCommandId = (await client.application.commands.fetch()).find(_ => _.name == "simulacra").id;
 
 
     if ( role === "all" && element === "all" ) {
@@ -140,12 +143,16 @@ module.exports = {
       imgIndex++;
     }    
 
-
     const embed = new EmbedBuilder()
       .setTitle(`Meta ${role[0].toUpperCase() + role.slice(1)} ${element[0].toUpperCase() + element.slice(1)} Team`)
       .setURL(goToCompLink(teams[0]))
-      .setDescription(`Here are the meta ${role[0].toUpperCase() + role.slice(1)} ${element[0].toUpperCase() + element.slice(1)} teams`)
+      .setDescription(`Here are the meta \`${role[0].toUpperCase() + role.slice(1)}\`, \`${element[0].toUpperCase() + element.slice(1)}\` teams.\n\nUse the </simulacra:${simulacraCommandId}> command to find out more about each character`)
       .setColor(0x00AE86)
+      .addFields(
+        { name: simulacraData[teams[0][0]].name, value: `[Link](https://toweroffantasy.info/simulacra/${simulacraData[teams[0][0]].name.replace(' ', '-').toLowerCase()})`, inline: true },
+        { name: simulacraData[teams[0][1]].name, value: `[Link](https://toweroffantasy.info/simulacra/${simulacraData[teams[0][0]].name.replace(' ', '-').toLowerCase()})`, inline: true },
+        { name: simulacraData[teams[0][2]].name, value: `[Link](https://toweroffantasy.info/simulacra/${simulacraData[teams[0][0]].name.replace(' ', '-').toLowerCase()})`, inline: true },
+      )
       .setImage("attachment://0.png")
       .setFooter({ text: `Page 1/${teams.length}` });
     
@@ -212,7 +219,14 @@ module.exports = {
 
           embed.setImage(`attachment://${page}.png`);
           embed.setFooter({ text: `Page ${page + 1}/${teams.length}` });
-          embed.setURL(goToCompLink(teams[page]));
+          embed.setURL(goToCompLink(teams[page]));  
+          
+          embed.setFields(
+            { name: simulacraData[teams[page][0]].name, value: `[Link](https://toweroffantasy.info/simulacra/${simulacraData[teams[page][0]].name.replace(' ', '-').toLowerCase()})`, inline: true },
+            { name: simulacraData[teams[page][1]].name, value: `[Link](https://toweroffantasy.info/simulacra/${simulacraData[teams[page][0]].name.replace(' ', '-').toLowerCase()})`, inline: true },
+            { name: simulacraData[teams[page][2]].name, value: `[Link](https://toweroffantasy.info/simulacra/${simulacraData[teams[page][0]].name.replace(' ', '-').toLowerCase()})`, inline: true },
+          )
+
 
           await interaction.editReply({ embeds: [embed], components: [row], files: [attachments[page]] });
       });
