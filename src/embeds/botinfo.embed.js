@@ -54,7 +54,7 @@ const botinfoEmbed = () => {
                 :hash: **Tag :** ${client.user.tag}
                 :gear: **Version :** ${require("../../package.json").version}
                 :pushpin: **Prefix :** Slash Commands (/)
-                <:discorddeveloperbadge:892323387408519218> **Developers :** Marviuz#8781
+                <:discorddeveloperbadge:892323387408519218> **Developers :** [Team](https://github.com/Wizi8914/tower-of-funtasy-discordbot/graphs/contributors)
                 `
             },
             { 
